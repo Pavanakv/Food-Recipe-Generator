@@ -6,15 +6,26 @@ function RecipeResult() {
   const navigate = useNavigate();
   const { recipe, clearRecipe } = useRecipe();
 
-  // handleBack() → clearRecipe and navigate("/")
+  const handleBack = () => {
+    clearRecipe();
+    navigate("/");
+  };
 
-  // if no recipe → return fallback UI with "Go Home" button → navigate("/")
+  if (!recipe) {
+    return (
+      <div className="no-recipe">
+        <h2>No recipe generated yet</h2>
+        <p>Go back and upload an image to get started!</p>
+        <button className="primary-btn" onClick={() => navigate("/")}>Go Home</button>
+      </div>
+    );
+  }
 
   return (
     <div className="recipe-result-page">
-      {/* Back button → handleBack */}
-      {/* Page heading */}
-      {/* RecipeDisplay component */}
+      <button className="back-btn" onClick={handleBack}>&larr; Back to Home</button>
+      <h2>Your AI-Generated Recipe</h2>
+      <RecipeDisplay recipe={recipe} />
     </div>
   );
 }

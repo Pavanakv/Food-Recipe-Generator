@@ -7,21 +7,41 @@ import Loader from "../components/Loader";
 function RecipeDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  // state: recipe, loading, error
+  const [recipe,  setRecipe]  = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error,   setError]   = useState(null);
 
   useEffect(() => {
-    // fetchRecipe() → GET /api/recipes/saved/:id → setRecipe
-    // handle error → setError("Recipe not found")
+    const fetchRecipe = async () => {
+      try {
+        const { data } = await axios.get(`/api/recipes/saved/${id}`);
+        setRecipe(data);
+      } catch {
+        setError("Recipe not found");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRecipe();
   }, [id]);
 
-  // if loading → return Loader
-  // if error → return error page with "Back to Saved Recipes" button → navigate("/saved")
+  if (loading) return<Loader message="Loading recipe..." />;
+
+  if (error) {
+    return (
+      <div className="error-page">
+        <h2>{error}</h2>
+        <button className="primary-btn" onClick={() => navigate("/saved")}>
+          Back to Saved Recipes
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="recipe-detail-page">
-      {/* Back button → navigate("/saved") */}
-      {/* RecipeDisplay component */}
+      <button className="back-btn" onClick={() => navigate("/saved")}>&larr; Back to Saved Recipes</button>
+      <RecipeDisplay recipe={recipe} />
     </div>
   );
 }

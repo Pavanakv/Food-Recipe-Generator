@@ -2,20 +2,52 @@ import { useState } from "react";
 import { useRecipe } from "../context/RecipeContext";
 
 function IngredientList() {
-  // state: newIngredient (local input)
-  // from context: ingredients, setIngredients
+  const { ingredients, setIngredients } = useRecipe();
+  const [newIngredient, setNewIngredient] = useState("");
 
-  // addIngredient()         → adds trimmed, non-duplicate ingredient
-  // removeIngredient(index) → removes ingredient at index
-  // handleKeyDown(e)        → calls addIngredient on Enter key
+  const addIngredient = () => {
+    const trimmed = newIngredient.trim();
+    if (trimmed && !ingredients.includes(trimmed)) {
+      setIngredients((prev) => [...prev, trimmed]);
+      setNewIngredient("");
+    }
+  };
 
-  // returns null if ingredients.length === 0
+  const removeIngredient = (index) => {
+    setIngredients((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") { e.preventDefault(); addIngredient(); }
+  };
+
+  if (ingredients.length === 0) return null;
 
   return (
     <div className="ingredient-list">
-      {/* Heading */}
-      {/* Tag pills with remove button */}
-      {/* Add more input + button */}
+      <h3>Detected Ingredients</h3>
+      <div className="ingredient-tags">
+        {ingredients.map((ingredient, index) => (
+          <span key={index} className="ingredient-tag">
+            {ingredient}
+            <button className="remove-btn" onClick={() => removeIngredient(index)}>
+              &times;
+            </button>
+          </span>
+        ))}
+      </div>
+
+      <div className="add-ingredient">
+        <input
+          type="text"
+          value={newIngredient}
+          onChange={(e) => setNewIngredient(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Add more ingredients..."
+          className="ingredient-input"
+        />
+        <button onClick={addIngredient} className="add-btn">Add</button>
+      </div>
     </div>
   );
 }

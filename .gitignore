@@ -1,0 +1,6 @@
+Server-Files/.env
+Server-Files/node_modules
+Server-Files/dist
+
+Client-Files/node_modules
+Client-Files/dist
